@@ -1,111 +1,99 @@
-# JSON Mapping / JSON 직렬화·역직렬화
+# JSON Utilities / JSON 유틸리티
 
 [ENG](#eng) | [KR](#kr)
 
 ## ENG
 
-A small Jackson example that converts Java values to JSON and reads a JSON object as a Map. It also shows how to format JSON for easy reading.
+Uses the original JsonUtils methods for JSON serialization, pretty printing, JSONObject access, and JSON-to-Map conversion. The original null-on-error behavior is kept.
 
-### Project structure
+### Source and minimal changes
+
+Only package names and formatting changed in JsonUtils. Added tests and local build settings. Removed the previously generated JsonCodec.
+
+| Original source | Extracted file |
+|---|---|
+| `ProxyApplication.java` | [DemoApplication.java](src/main/java/io/github/parkwoong/demo/DemoApplication.java) |
+| `spec/util/JsonUtils.java` | [spec/util/JsonUtils.java](src/main/java/io/github/parkwoong/demo/spec/util/JsonUtils.java) |
+
+### Structure
 
 ```text
 pom.xml
-src/
-├── main/
-│   └── java/io/github/parkwoong/demo/
-│       ├── DemoApplication.java
-│       └── JsonCodec.java
-└── test/java/io/github/parkwoong/demo/
-    └── JsonCodecTest.java
+src/main/java/io/github/parkwoong/demo/DemoApplication.java
+src/main/java/io/github/parkwoong/demo/spec/util/JsonUtils.java
+src/main/resources/application.properties
+src/test/java/io/github/parkwoong/demo/JsonUtilsTest.java
 ```
-
-Java package: `io.github.parkwoong.demo`.
-
-| File | Role |
-|---|---|
-| [DemoApplication.java](src/main/java/io/github/parkwoong/demo/DemoApplication.java) | Starts Spring Boot and runs the example. |
-| [JsonCodec.java](src/main/java/io/github/parkwoong/demo/JsonCodec.java) | Reuses an ObjectMapper. encode() writes JSON; decode() reads a Map. |
-| [pom.xml](pom.xml) | Dependencies and build settings. |
 
 ### How it works
 
-DemoApplication creates a sample Map and calls JsonCodec.encode(value, true). The console shows formatted JSON with name=sample and count=3. decode() is used in the test to check the round trip.
+Call JsonUtils.toJsonString(value, false), toPrettyJsonString(value), getJson(body), getValueFromJsonString(body, key), or getDataMapFromJsonString(body). JsonUtilsTest shows calls with sample data.
 
-### Run
+### Run and test
 
-Requirements: Java 17+ and Maven 3.6.3+. Run these commands from the repository root.
+Use Java 17 and Maven 3.6.3+. Run from the repository root:
 
 ```sh
 mvn clean verify
 mvn spring-boot:run
 ```
 
-This is a console example, not an HTTP server. JSON field order is not guaranteed.
+The app starts without an HTTP server or an added console workflow. Use the tests under src/test for actual calls and results. Database modules initialize H2 at startup.
 
-### Tests
+### Formatting
 
-JsonCodecTest checks a Map → JSON → Map round trip, including Korean text, and rejects broken JSON.
+All Java files use google-java-format 1.24.0 with the AOSP style: four-space indentation, consistent line breaks, and organized imports.
 
-[JsonCodecTest.java](src/test/java/io/github/parkwoong/demo/JsonCodecTest.java)
+### Original limits
 
-### Scope and limits
+JSON-to-XML is not included. getValueFromJsonString expects a String value. Invalid input may return null and log an error; callers must handle it.
 
-decode() expects a JSON object. This example does not convert JSON to XML. JSON errors are passed to the caller as JsonProcessingException.
-
-This learning example uses Spring Boot 3.5.16. Before production use, move to a supported version; see the [3.5 OSS support notice](https://spring.io/blog/2026/06/25/spring-boot-3-5-16-available-now/). Production connections and load tests are not included.
-
-Adapted from a Java proxy project using generic names and sample data. Original Git history, production settings, and business identifiers are not included.
+The build keeps Spring Boot 2.6.6 and the original MyBatis/JJWT APIs for source fidelity. Lombok 1.18.36 supports the local Java 17 build. These are legacy dependencies; this extraction is for learning, not a production-ready upgrade. No production integration or load test is included.
 
 ## KR
 
-Jackson으로 Java 값을 JSON으로 변환하고 JSON 객체를 Map으로 읽는 예제입니다. 읽기 좋은 JSON 출력 방법도 다룹니다.
+원본 JsonUtils의 JSON 직렬화, pretty printing, JSONObject 조회, JSON→Map 변환 메서드를 추출했습니다. 오류 발생 시 null을 반환하는 원본 동작을 유지합니다.
+
+### 원본과 최소 변경 사항
+
+JsonUtils는 패키지 이름과 포맷만 변경했습니다. 테스트와 로컬 빌드 설정을 추가하고 이전에 새로 작성했던 JsonCodec은 제거했습니다.
+
+| 원본 파일 | 추출 파일 |
+|---|---|
+| `ProxyApplication.java` | [DemoApplication.java](src/main/java/io/github/parkwoong/demo/DemoApplication.java) |
+| `spec/util/JsonUtils.java` | [spec/util/JsonUtils.java](src/main/java/io/github/parkwoong/demo/spec/util/JsonUtils.java) |
 
 ### 프로젝트 구조
 
 ```text
 pom.xml
-src/
-├── main/
-│   └── java/io/github/parkwoong/demo/
-│       ├── DemoApplication.java
-│       └── JsonCodec.java
-└── test/java/io/github/parkwoong/demo/
-    └── JsonCodecTest.java
+src/main/java/io/github/parkwoong/demo/DemoApplication.java
+src/main/java/io/github/parkwoong/demo/spec/util/JsonUtils.java
+src/main/resources/application.properties
+src/test/java/io/github/parkwoong/demo/JsonUtilsTest.java
 ```
 
-Java 패키지: `io.github.parkwoong.demo`.
+### 코드 설명
 
-| 파일 | 역할 |
-|---|---|
-| [DemoApplication.java](src/main/java/io/github/parkwoong/demo/DemoApplication.java) | Spring Boot를 시작하고 예제를 실행합니다. |
-| [JsonCodec.java](src/main/java/io/github/parkwoong/demo/JsonCodec.java) | ObjectMapper를 재사용합니다. encode()는 JSON을 만들고 decode()는 Map을 읽습니다. |
-| [pom.xml](pom.xml) | 의존성과 빌드 설정입니다. |
+JsonUtils.toJsonString(value, false), toPrettyJsonString(value), getJson(body), getValueFromJsonString(body, key), getDataMapFromJsonString(body)를 호출합니다. JsonUtilsTest에서 샘플 호출을 확인할 수 있습니다.
 
-### 동작 방식
+### 실행과 테스트
 
-DemoApplication이 샘플 Map을 만들고 JsonCodec.encode(value, true)를 호출합니다. 콘솔에는 name=sample, count=3인 JSON이 출력됩니다. 테스트에서는 decode()로 다시 읽어 원래 값과 비교합니다.
-
-### 실행 방법
-
-Java 17 이상, Maven 3.6.3 이상이 필요합니다. 저장소 루트에서 실행하세요.
+Java 17, Maven 3.6.3 이상을 사용합니다. 저장소 루트에서 실행하세요:
 
 ```sh
 mvn clean verify
 mvn spring-boot:run
 ```
 
-HTTP 서버가 아닌 콘솔 예제입니다. JSON 필드 순서는 보장하지 않습니다.
+앱은 HTTP 서버나 별도 콘솔 시나리오 없이 시작합니다. 실제 호출과 결과 확인은 src/test의 테스트를 이용하세요. DB 모듈은 시작 시 H2를 초기화합니다.
 
-### 테스트
+### 코드 포맷
 
-JsonCodecTest는 한글을 포함한 Map → JSON → Map 변환과 잘못된 JSON 입력의 예외 발생을 확인합니다.
+전체 Java 파일에 google-java-format 1.24.0의 AOSP 스타일을 적용했습니다. 들여쓰기 4칸, 일관된 줄바꿈 및 import 정리를 사용합니다.
 
-[JsonCodecTest.java](src/test/java/io/github/parkwoong/demo/JsonCodecTest.java)
+### 유지한 원본 동작과 제한
 
-### 범위와 제한
+JSON→XML은 포함하지 않습니다. getValueFromJsonString은 문자열 값을 기대합니다. 잘못된 입력은 오류 로그와 null 반환으로 처리하므로 호출자가 확인해야 합니다.
 
-decode()는 JSON 객체를 입력받습니다. JSON→XML 변환은 포함하지 않습니다. JSON 처리 오류는 JsonProcessingException으로 호출자에게 전달됩니다.
-
-Spring Boot 3.5.16 기반 학습용 예제입니다. 운영 도입 전 지원 버전으로 전환하세요. [3.5 OSS 지원 종료 안내](https://spring.io/blog/2026/06/25/spring-boot-3-5-16-available-now/)를 참고할 수 있습니다. 운영 시스템 연결 및 부하 테스트는 포함하지 않습니다.
-
-기존 Java 프록시 프로젝트에서 기술을 추출해 범용 이름과 샘플 데이터로 재작성했습니다. 기존 Git 이력, 운영 설정 및 업무 식별자는 포함하지 않습니다.
+원본 코드 보존을 위해 Spring Boot 2.6.6과 원본 MyBatis/JJWT API를 사용합니다. 로컬 Java 17 빌드를 위해 Lombok 1.18.36을 적용했습니다. 레거시 의존성을 사용하는 학습용 추출본이며 운영용 업그레이드가 아닙니다. 운영 연동 및 부하 테스트는 포함하지 않습니다.
