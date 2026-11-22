@@ -6,12 +6,15 @@ import io.github.parkwoong.demo.spec.util.JsonUtils;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 class JsonUtilsTest {
     @Test
     void originalConversionsAndFailureContract() {
-        Map<String, Object> value = Map.of("name", "sample", "count", 3);
+        Map<String, Object> value = new HashMap<>();
+        value.put("name", "sample");
+        value.put("count", 3);
         assertEquals(
                 value, JsonUtils.getDataMapFromJsonString(JsonUtils.toPrettyJsonString(value)));
         assertEquals(
