@@ -17,13 +17,17 @@ src/test/java/io/github/parkwoong/demo/JsonUtilsTest.java
 
 ### Code explanation
 
-`JsonUtils` converts Java values to JSON, formats JSON, reads a `JSONObject`, and converts a JSON object to a `Map`. `toJsonString(value, false)` produces compact JSON; `toPrettyJsonString(value)` formats it. `getValueFromJsonString` reads a String field. Invalid input may return `null`, so callers must check the result.
+`JsonUtils` converts Java values to JSON, formats JSON, reads a `JSONObject`, and converts a
+JSON object to a `Map`. `toJsonString(value, false)` produces compact JSON;
+`toPrettyJsonString(value)` formats it. `getValueFromJsonString` reads a String field. Invalid
+input may return `null`, so callers must check the result.
 
 JsonController exposes JSON parsing and formatting through one HTTP request.
 
 ### Run and test
 
-Use JDK 8 and Maven 3.6.3+. Set JAVA_HOME to your JDK 8 directory, then run from the repository root:
+Use JDK 8 and Maven 3.6.3+. Set JAVA_HOME to your JDK 8 directory, then run from the repository
+root:
 
 ```sh
 java -version
@@ -34,11 +38,37 @@ mvn spring-boot:run
 
 `JsonUtilsTest` checks JSON/Map round trips, String field lookup, and invalid input.
 
-The app listens on localhost:8080. The original unit tests still check the underlying methods.
+The app listens on localhost:8080. Unit tests cover the helper methods.
 
 #### Postman API
 
-Send POST http://localhost:8080/api/json/format with Content-Type: application/json and body {"name":"sample","count":2}. Expected: HTTP 200 with the same JSON formatted on multiple lines. Invalid JSON returns HTTP 400.
+##### Format JSON
+
+**Request**
+
+- Method: POST
+- URL: http://localhost:8080/api/json/format
+- Content-Type: application/json
+
+~~~json
+{
+  "name": "sample",
+  "count": 2
+}
+~~~
+
+**Response**
+
+- Status: 200 OK
+
+~~~json
+{
+  "name": "sample",
+  "count": 2
+}
+~~~
+
+**Note:** Invalid JSON: 400 Bad Request.
 
 ## KR
 
@@ -55,13 +85,17 @@ src/test/java/io/github/parkwoong/demo/JsonUtilsTest.java
 
 ### 코드 설명
 
-`JsonUtils`는 Java 값의 JSON 직렬화, JSON 포맷 출력, `JSONObject` 조회 및 JSON 객체의 `Map` 변환을 제공합니다. `toJsonString(value, false)`는 압축 JSON, `toPrettyJsonString(value)`는 정렬된 JSON을 만듭니다. `getValueFromJsonString`은 문자열 필드를 읽습니다. 잘못된 입력은 `null`을 반환할 수 있으므로 호출자가 확인해야 합니다.
+`JsonUtils`는 Java 값의 JSON 직렬화, JSON 포맷 출력, `JSONObject` 조회 및 JSON
+객체의 `Map` 변환을 제공한다. `toJsonString(value, false)`는 압축 JSON,
+`toPrettyJsonString(value)`는 읽기 편한 JSON을 만든다.
+`getValueFromJsonString`은 문자열 필드를 읽는다. 잘못된 입력은 `null`을 반환할 수 있으므로
+호출자가 확인해야 한다.
 
-JsonController는 HTTP 요청 한 번으로 JSON 읽기와 형식 정리를 확인합니다.
+JsonController는 HTTP 요청 한 번으로 JSON 읽기와 형식 정리를 확인한다.
 
 ### 실행과 테스트
 
-JDK 8과 Maven 3.6.3 이상을 사용합니다. JAVA_HOME을 JDK 8 경로로 설정하고 저장소 루트에서 실행하세요:
+JDK 8, Maven 3.6.3 이상 사용. 저장소 루트에서 실행.
 
 ```sh
 java -version
@@ -70,10 +104,36 @@ mvn clean verify
 mvn spring-boot:run
 ```
 
-`JsonUtilsTest`는 JSON/Map 왕복 변환, 문자열 필드 조회 및 잘못된 입력을 확인합니다.
+`JsonUtilsTest`는 JSON/Map 왕복 변환, 문자열 필드 조회 및 잘못된 입력을 확인한다.
 
-앱은 localhost:8080에서 실행됩니다. 기존 단위 테스트는 내부 메서드를 계속 확인합니다.
+앱은 localhost:8080에서 실행된다. 단위 테스트는 내부 메서드를 확인한다.
 
 #### Postman API
 
-Content-Type: application/json으로 POST http://localhost:8080/api/json/format에 {"name":"sample","count":2}를 보내세요. 예상 결과: HTTP 200과 줄바꿈으로 정리된 동일한 JSON입니다. 잘못된 JSON은 HTTP 400을 반환합니다.
+##### JSON 형식 정리
+
+**요청**
+
+- 메서드: POST
+- URL: http://localhost:8080/api/json/format
+- Content-Type: application/json
+
+~~~json
+{
+  "name": "sample",
+  "count": 2
+}
+~~~
+
+**응답**
+
+- 상태: 200 OK
+
+~~~json
+{
+  "name": "sample",
+  "count": 2
+}
+~~~
+
+**참고:** 잘못된 JSON: 400 Bad Request.
